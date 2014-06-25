@@ -31,15 +31,16 @@ public class SlideImage {
     }
     
     /*
-     * Constructor which sets the Image and the caption upon 
-     * Creation.
+     * Constructor which sets the Image, the file path for that image and
+     * caption upon creation. 
      * @param image, image SlideImage(Slide) holds,
      * @param caption, caption to the image
      * @param filepath, the file path to the image
      */
-    public SlideImage(String caption, Image image)
+    public SlideImage(String caption, String filePath, Image image)
     {
         this.caption = caption;
+        this.filePath = filePath;
         this.image = image;
     }
        
@@ -87,7 +88,7 @@ public class SlideImage {
      */
     public static String getFilePath()
     {
-        return SlideImage.filePath;
+        return filePath;
     }
     
     /*
