@@ -11,8 +11,8 @@ import java.util.*;
  */
 public class SlideShow 
 {
-   private static ArrayList<SlideImage> images;
-   private static String filePathSlideShow;
+   private ArrayList<SlideImage> images;
+   private String filePathSlideShow;
 
     public SlideShow() 
     { 
@@ -20,12 +20,12 @@ public class SlideShow
         this.filePathSlideShow = null;
     }
    
-   public static void addSlide(SlideImage newImage)
+   public void addSlide(SlideImage newImage)
    {
-        images.add(newImage);
+        this.images.add(newImage);
    }
    
-   public static void removeSlide(SlideImage slide)
+   public void removeSlide(SlideImage slide)
    {
         for(int i = 0; i < images.size(); i++)
         {
@@ -38,7 +38,7 @@ public class SlideShow
         }
    }
    
-   public static void removeSlides(int index)
+   public void removeSlides(int index)
    {
        
    }
