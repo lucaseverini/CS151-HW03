@@ -8,6 +8,13 @@ import java.awt.Image;
  *
  * @author Sarmad Syed, Omari Straker, Matt Sziklay, Luca Severini
  */
+
+/*
+ * The purpose of this class is to represent a Slide in a slide show.
+ * @param image, the image in the slide.
+ * @param caption, the caption to the image.
+ * @param filePath, the path to the image. 
+ */
 public class SlideImage {
     
     private Image image;
@@ -23,7 +30,7 @@ public class SlideImage {
     public SlideImage() 
     {
         this.image = null;
-        this.caption = "";
+        this.caption = null;
         this.filePath = null;
     }
     
