@@ -67,7 +67,6 @@ public class SlideShow
          * Comparing each caption to SlideImage bieng passed in.
          * @param slide, SlideImage to compare against.
         */
-        
         public int getCurrentIndex(SlideImage slide)
         {
             for(int i = 0; i < images.size(); i++)
