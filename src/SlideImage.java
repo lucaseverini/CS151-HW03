@@ -23,7 +23,7 @@ public class SlideImage {
     public SlideImage() 
     {
         this.image = null;
-        this.caption = null;
+        this.caption = "";
         this.filePath = null;
     }
     
@@ -97,5 +97,17 @@ public class SlideImage {
     {
         this.filePath = filePath;
             
+    }
+    
+    public String toString()
+    {
+        if ((caption == null)|(caption.equals("")))
+        {
+            return "Untitled";
+        }
+        else
+        {
+            return caption;
+        }
     }
 }
