@@ -40,6 +40,18 @@ public class SlideShow
    
    public void removeSlides(int index)
    {
-       
+       images.remove(index);
+   }
+   public String getFilePath()
+   {
+       return filePathSlideShow;
+   }
+   public void setFilePath(String datPath)
+   {
+       filePathSlideShow = datPath;
+   }
+   public Object[] toArray()
+   {
+      return images.toArray(); 
    }
 }
