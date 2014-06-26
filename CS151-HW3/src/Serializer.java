@@ -8,6 +8,7 @@
 
 //import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
@@ -29,85 +30,84 @@ import org.w3c.dom.NodeList;
 // Serializer -----------------------------------------------------
 public class Serializer 
 {
-	public static int saveSlideToFile(Object obj, String filePath) throws Exception
-	{
-		if(!(obj instanceof SlideShow))
-		{
-			throw new Exception();
-		}
-		
-		SlideShow sShow = (SlideShow)obj;
+	public static int saveSlideToFile(SlideShow sShow, String filePath)
+	{		
 		ArrayList<SlideImage> slides = sShow.getImages();
 		
-		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-		
-		Document doc = docBuilder.newDocument();
-		Element rootElement = doc.createElement("slideshow");
-		doc.appendChild(rootElement);
-		
-		Element nameElem = doc.createElement("name");
-		nameElem.setTextContent(sShow.getName());
-		rootElement.appendChild(nameElem);
-	
-		Element slidesElem = doc.createElement("slides");
-		rootElement.appendChild(slidesElem);
-
-		int slideIdx = 0;
-		for(SlideImage slide : slides)
+		try
 		{
-			slideIdx++;
-				
-			Element slideElem = doc.createElement("slide");
-			slidesElem.appendChild(slideElem);
-			
-			Attr indexAttr = doc.createAttribute("index");
-			indexAttr.setValue(String.valueOf(slideIdx));
-			slideElem.setAttributeNode(indexAttr);
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
-			BufferedImage image = slide.getImage();
-			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-			ImageIO.write(image, "png", outStream);		
-			String imageData = Base64.encodeBase64String(outStream.toByteArray());
+			Document doc = docBuilder.newDocument();
+			Element rootElement = doc.createElement("slideshow");
+			doc.appendChild(rootElement);
 
-			Element imageElem = doc.createElement("image");
-			slideElem.appendChild(imageElem);
+			Element nameElem = doc.createElement("name");
+			nameElem.setTextContent(sShow.getName());
+			rootElement.appendChild(nameElem);
 
-			Attr typeAttr = doc.createAttribute("type");
-			typeAttr.setValue("png");
-			imageElem.setAttributeNode(typeAttr);
+			Element slidesElem = doc.createElement("slides");
+			rootElement.appendChild(slidesElem);
 
-			Element dataElem = doc.createElement("data");
-			dataElem.setTextContent(imageData);
-			imageElem.appendChild(dataElem);
+			int slideIdx = 0;
+			for(SlideImage slide : slides)
+			{
+				slideIdx++;
 
-			Element captionElem = doc.createElement("caption");
-			captionElem.setTextContent(slide.getCaption());
-			imageElem.appendChild(captionElem);
+				Element slideElem = doc.createElement("slide");
+				slidesElem.appendChild(slideElem);
 
-			// Just for debug
-			System.out.println("Slide " + slideIdx);
-			System.out.println(imageData);
-			System.out.println(slide.getCaption());
-			System.out.println("");
+				Attr indexAttr = doc.createAttribute("index");
+				indexAttr.setValue(String.valueOf(slideIdx));
+				slideElem.setAttributeNode(indexAttr);
+
+				BufferedImage image = slide.getImage();
+				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+				ImageIO.write(image, "png", outStream);		
+				String imageData = Base64.encodeBase64String(outStream.toByteArray());
+
+				Element imageElem = doc.createElement("image");
+				slideElem.appendChild(imageElem);
+
+				Attr typeAttr = doc.createAttribute("type");
+				typeAttr.setValue("png");
+				imageElem.setAttributeNode(typeAttr);
+
+				Element dataElem = doc.createElement("data");
+				dataElem.setTextContent(imageData);
+				imageElem.appendChild(dataElem);
+
+				Element captionElem = doc.createElement("caption");
+				captionElem.setTextContent(slide.getCaption());
+				imageElem.appendChild(captionElem);
+
+				// Just for debug
+				System.out.println("Slide " + slideIdx);
+				System.out.println(imageData);
+				System.out.println(slide.getCaption());
+				System.out.println("");
+			}
+
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(new File(filePath));
+			transformer.transform(source, result);
 		}
-		
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
-		DOMSource source = new DOMSource(doc);
-		StreamResult result = new StreamResult(new File(filePath));
-		transformer.transform(source, result);
-
-		// Output to console for testing
-		result = new StreamResult(System.out);
-		transformer.transform(source, result);
+		catch(Exception ex)
+		{
+			System.out.println("saveSlideToFile Exception: " + ex.getMessage());
+			
+			return 0;
+		}
 		
 		System.out.println("SlideShow " + sShow.getName() + " saved in " + filePath);
 
 		return 1;
 	}
 	
-	public static Object openSlideFromFile(String filePath) throws Exception
+	public static SlideShow openSlideFromFile(String filePath)
 	{
 		File file = new File(filePath);
 		if(!file.exists() || !file.isFile())
@@ -117,70 +117,89 @@ public class Serializer
 		
 		SlideShow sShow = new SlideShow();
 		
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document doc = dBuilder.parse(file);
- 
-		doc.getDocumentElement().normalize();
- 
-		System.out.println("Root element: " + doc.getDocumentElement().getNodeName());
- 
-		NodeList nodes = doc.getElementsByTagName("slideshow");
-		
-		for (int nodeIdx = 0; nodeIdx < nodes.getLength(); nodeIdx++)
+		try
 		{
-			Node node = nodes.item(nodeIdx);
-			if(node.getNodeName().equals("slideshow"))
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(file);
+
+			doc.getDocumentElement().normalize();
+
+			System.out.println("Root element: " + doc.getDocumentElement().getNodeName());
+
+			NodeList nodes = doc.getElementsByTagName("slideshow");
+
+			for (int nodeIdx = 0; nodeIdx < nodes.getLength(); nodeIdx++)
 			{
-				NodeList children = node.getChildNodes();
-				for (int childIdx = 0; childIdx < children.getLength(); childIdx++)
+				Node node = nodes.item(nodeIdx);
+				if(node.getNodeName().equals("slideshow"))
 				{
-					Node childNode = children.item(childIdx);
-					if(node.getNodeName().equals("name"))
+					NodeList children = node.getChildNodes();
+					for (int childIdx = 0; childIdx < children.getLength(); childIdx++)
 					{
-						sShow.setName(node.getTextContent());
-					}
-					else if(node.getNodeName().equals("slides"))
-					{
-						NodeList slides = node.getChildNodes();
-						for (int slideIdx = 0; slideIdx < slides.getLength(); slideIdx++)
+						Node childNode = children.item(childIdx);
+						if(childNode.getNodeName().equals("name"))
 						{
-							Node slidesNodes = slides.item(slideIdx);
-							if(slidesNodes.getNodeName().equals("slide"))
+							sShow.setName(childNode.getTextContent());
+						}
+						else if(childNode.getNodeName().equals("slides"))
+						{
+							NodeList slides = childNode.getChildNodes();
+							for (int slideIdx = 0; slideIdx < slides.getLength(); slideIdx++)
 							{
-								NodeList slideNodes = slidesNodes.getChildNodes();
-								for (int slideNodeIdx = 0; slideNodeIdx < slideNodes.getLength(); slideNodeIdx++)
+								Node slidesNodes = slides.item(slideIdx);
+								if(slidesNodes.getNodeName().equals("slide"))
 								{
-									SlideImage slide = new SlideImage();
-									
-									Node slideNode = slideNodes.item(slideNodeIdx);
-									if(slideNode.getNodeName().equals("image"))
+									NodeList slideNodes = slidesNodes.getChildNodes();
+									for (int slideNodeIdx = 0; slideNodeIdx < slideNodes.getLength(); slideNodeIdx++)
 									{
-										/*
-										NamedNodeMap attribs = slideNode.getAttributes();
-										if(attribs.)
+										SlideImage slide = new SlideImage();
+
+										Node slideNode = slideNodes.item(slideNodeIdx);
+										if(slideNode.getNodeName().equals("image"))
 										{
+											NamedNodeMap attribs = slideNode.getAttributes();											
+											Node typeAttrib = attribs.getNamedItem("type");
+																
+											if(typeAttrib != null && typeAttrib.getNodeValue().equals("png"))
+											{
+												byte[] imageData = Base64.decodeBase64(slideNode.getTextContent());												
+												ByteArrayInputStream inStream = new ByteArrayInputStream(imageData);
+												BufferedImage image = ImageIO.read(inStream);
+												if(image != null)
+												{
+													slide.setImage(image);
+												}
+												else
+												{
+													return null;
+												}
+											}
+											else
+											{
+												return null;
+											}
 										}
-										
-										byte[] imageData = Base64.decodeBase64(slideNode.getTextContent());
-										
-										BufferedImage image = new BufferedImage();
-										*/
-										//slide.setImage(image);
+										else if(slideNode.getNodeName().equals("caption"))
+										{
+											slide.setCaption(slideNode.getTextContent());
+										}
+
+										sShow.addSlide(slide);
 									}
-									else if(slideNode.getNodeName().equals("caption"))
-									{
-										slide.setCaption(slideNode.getTextContent());
-									}
-									
-									sShow.addSlide(slide);
 								}
 							}
 						}
 					}
 				}
 			}
- 		}
+		}
+		catch(Exception ex)
+		{
+			System.out.println("openSlideFromFile Exception: " + ex.getMessage());
+			
+			return null;
+		}
 
 		return sShow;
 	}

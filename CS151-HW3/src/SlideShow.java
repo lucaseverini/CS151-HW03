@@ -61,6 +61,24 @@ public class SlideShow
 		   System.out.println("Slide is not in List");
 		}
 	}
+        
+        /*
+         * Gets the Current Index of the Slide for Use with removeSlide by index.
+         * and getCurrentSlide by index, by iterating through the ArrayList and
+         * Comparing each caption to SlideImage bieng passed in.
+         * @param slide, SlideImage to compare against.
+        */
+        public int getCurrentIndex(SlideImage slide)
+        {
+            for(int i = 0; i < images.size(); i++)
+		{
+		   if(images.get(i).getCaption().equals(slide.getCaption()))
+			{
+			   return i;
+			}
+                }   
+            return -1;
+        } 
 
 	/*
 	 * removes the Slide from the ArrayList of SlideImages 
@@ -71,29 +89,16 @@ public class SlideShow
 	{
 	   images.remove(index);
 	}
-
+        
+        /*
+         * Returns the current slide according to its location 
+         * in the ArrayList. 
+         * @param index, the index of the slide in the ArrayList.
+         */
 	public SlideImage getCurrentSlide(int index)
 	{
 	   return images.get(index);
 	}
-
-	/*
-	 * Gets the Current Index of the Slide for Use with removeSlide by index.
-	 * and getCurrentSlide by index, by iterating through the ArrayList and
-	 * Comparing each caption to SlideImage bieng passed in.
-	 * @param slide, SlideImage to compare against.
-	*/
-	public int getCurrentIndex(SlideImage slide)
-	{
-		for(int i = 0; i < images.size(); i++)
-	{
-	   if(images.get(i).getCaption().equals(slide.getCaption()))
-		{
-		   return i;
-		}
-			}   
-		return -1;
-	} 
 
 	/*
 	 * Sets the string being passed in
@@ -106,7 +111,7 @@ public class SlideShow
 	}
 
 	/* 
-	 * Returns the File Path of SlideShow
+	 * Returns the File Path of the SlideShow
 	 * @param none.
 	 */
 	public String getFilePath()
@@ -115,7 +120,7 @@ public class SlideShow
 	}
 
 	 /* 
-	 * Returns the Images list of SlideShow
+	 * Returns the Images list of the SlideShow
 	 * @param none.
 	 */
 	public ArrayList<SlideImage> getImages()
