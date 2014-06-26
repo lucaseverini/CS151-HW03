@@ -10,8 +10,8 @@ import java.awt.Image;
  */
 public class SlideImage {
     
-    private static Image image;
-    private static String caption, filePath;
+    private Image image;
+    private String caption, filePath;
     
    /* 
     * Default Constructor That creates 
@@ -57,7 +57,7 @@ public class SlideImage {
      */
     public void setImage(Image image)
     {
-        SlideImage.image = image;
+        this.image = image;
     }
     
     /* 
@@ -76,7 +76,7 @@ public class SlideImage {
      */ 
     public void setCaption(String caption)
     {
-        SlideImage.caption = caption;
+        this.caption = caption;
     }
     
     /* 
@@ -95,7 +95,7 @@ public class SlideImage {
      */
     public void setFilePath(String filePath)
     {
-        SlideImage.filePath = filePath;
+        this.filePath = filePath;
             
     }
 }
