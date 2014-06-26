@@ -45,7 +45,7 @@ public class SlideImage {
      * Returns the Slide's image
      * @param none.
      */
-    public static Image getImage()
+    public  Image getImage()
     {
         return image;
     }
@@ -55,7 +55,7 @@ public class SlideImage {
      * to the SlideImage Object(Slide).
      * @param image, image to be set to slide.
      */
-    public static void setImage(Image image)
+    public void setImage(Image image)
     {
         SlideImage.image = image;
     }
@@ -64,7 +64,7 @@ public class SlideImage {
      * Returns the Slide's Caption;
      * @param none.
      */
-    public static String getCaption()
+    public String getCaption()
     {
         return caption;
     }
@@ -74,7 +74,7 @@ public class SlideImage {
      * to the SlideImage Object(Slide). 
      * @param caption, caption to be set to the Slide
      */ 
-    public static void setCaption(String caption)
+    public void setCaption(String caption)
     {
         SlideImage.caption = caption;
     }
@@ -83,7 +83,7 @@ public class SlideImage {
      * Returns the File Path of the image to the Slide
      * @param none.
      */
-    public static String getFilePath()
+    public String getFilePath()
     {
         return filePath;
     }
@@ -93,7 +93,7 @@ public class SlideImage {
      * to the SlideImage Object (Slide).
      * @param filePath, file path of the image in the Slide
      */
-    public static void setFilePath(String filePath)
+    public void setFilePath(String filePath)
     {
         SlideImage.filePath = filePath;
             
