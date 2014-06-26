@@ -78,6 +78,24 @@ public class SlideShow
 	}
 
 	/*
+	 * Gets the Current Index of the Slide for Use with removeSlide by index.
+	 * and getCurrentSlide by index, by iterating through the ArrayList and
+	 * Comparing each caption to SlideImage bieng passed in.
+	 * @param slide, SlideImage to compare against.
+	*/
+	public int getCurrentIndex(SlideImage slide)
+	{
+		for(int i = 0; i < images.size(); i++)
+	{
+	   if(images.get(i).getCaption().equals(slide.getCaption()))
+		{
+		   return i;
+		}
+			}   
+		return -1;
+	} 
+
+	/*
 	 * Sets the string being passed in
 	 * to the path for the SlideShow Object
 	 * @param datpath, file path of the SlideShow
