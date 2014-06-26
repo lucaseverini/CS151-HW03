@@ -48,7 +48,7 @@ public class CS151HW3
 			int result = Serializer.saveSlideToFile(sShow, "/Users/Luca/Desktop/slide_show.xml");
 			System.out.println("Result: " + result);
 			
-			SlideShow readSlideShow = (SlideShow)Serializer.openSlideFromFile("/Users/Luca/Desktop/slide_show.xml");
+			SlideShow readSlideShow = Serializer.openSlideFromFile("/Users/Luca/Desktop/slide_show.xml");
 			System.out.println("Result: " + readSlideShow);
 		}
 		catch(Exception ex)
