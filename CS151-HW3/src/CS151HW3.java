@@ -24,6 +24,8 @@ public class CS151HW3
 	{
 		SlideShow sShow = new SlideShow();
 		
+		sShow.setName("Name");
+		
 		SlideImage slide = new SlideImage();
 		
 		slide.setCaption("Caption");
@@ -45,6 +47,9 @@ public class CS151HW3
 		{
 			int result = Serializer.saveSlideToFile(sShow, "/Users/Luca/Desktop/slide_show.xml");
 			System.out.println("Result: " + result);
+			
+			SlideShow readSlideShow = (SlideShow)Serializer.openSlideFromFile("/Users/Luca/Desktop/slide_show.xml");
+			System.out.println("Result: " + readSlideShow);
 		}
 		catch(Exception ex)
 		{

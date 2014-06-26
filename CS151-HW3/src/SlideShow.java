@@ -19,6 +19,7 @@ import java.util.*;
 public class SlideShow 
 {
 	private ArrayList<SlideImage> images;
+	private String name;
 	private String filePathSlideShow;
 
 	/*
@@ -87,7 +88,7 @@ public class SlideShow
 	}
 
 	/* 
-	 * Returns the File Path of the SlideShow
+	 * Returns the File Path of SlideShow
 	 * @param none.
 	 */
 	public String getFilePath()
@@ -96,7 +97,7 @@ public class SlideShow
 	}
 
 	 /* 
-	 * Returns the Images list of the SlideShow
+	 * Returns the Images list of SlideShow
 	 * @param none.
 	 */
 	public ArrayList<SlideImage> getImages()
@@ -104,8 +105,32 @@ public class SlideShow
 	   return images;
 	}
 
+	/* 
+	 * Returns the name of SlideShow
+	 * @param none.
+	 */
+	public String getName()
+	{
+	   return name;
+	}
+
+	/* 
+	 * Set the name of SlideShow
+	 * @param String containing the name.
+	 */
+	public void setName(String theName)
+	{
+	   name = theName;
+	}
+
 	public Object[] toArray()
 	{
 	   return images.toArray();
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "SlideShow " + name + " : " + getImages().size() + "slide(s)";
 	}
 }
