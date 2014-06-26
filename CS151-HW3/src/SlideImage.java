@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2014 Sarmad Syed. All Rights reserved.
  */
-import java.awt.Image;
 
+import java.awt.image.BufferedImage;
 
 /**
  *
@@ -15,9 +15,9 @@ import java.awt.Image;
  * @param caption, the caption to the image.
  * @param filePath, the path to the image. 
  */
-public class SlideImage {
-    
-    private Image image;
+public class SlideImage 
+{
+    private BufferedImage image;
     private String caption, filePath;
     
    /* 
@@ -33,7 +33,13 @@ public class SlideImage {
         this.caption = null;
         this.filePath = null;
     }
-    
+/*
+	SlideImage.java
+
+    Assignment #3 - CS151 - SJSU
+	By Luca Severini, Omari Straker, Syed Sarmad, Matt Szikley
+	June-26-2014
+*/
     /*
      * Constructor which sets the Image, the file path for that image and
      * caption upon creation. 
@@ -41,7 +47,7 @@ public class SlideImage {
      * @param caption, caption to the image
      * @param filepath, the file path to the image
      */
-    public SlideImage(String caption, String filePath, Image image)
+    public SlideImage(String caption, String filePath, BufferedImage image)
     {
         this.caption = caption;
         this.filePath = filePath;
@@ -52,7 +58,7 @@ public class SlideImage {
      * Returns the Slide's image
      * @param none.
      */
-    public  Image getImage()
+    public BufferedImage getImage()
     {
         return image;
     }
@@ -62,7 +68,7 @@ public class SlideImage {
      * to the SlideImage Object(Slide).
      * @param image, image to be set to slide.
      */
-    public void setImage(Image image)
+    public void setImage(BufferedImage image)
     {
         this.image = image;
     }

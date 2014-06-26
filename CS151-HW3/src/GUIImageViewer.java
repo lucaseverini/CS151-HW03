@@ -1,3 +1,10 @@
+/*
+	GUIImageViewer.java
+
+    Assignment #3 - CS151 - SJSU
+	By Luca Severini, Omari Straker, Syed Sarmad, Matt Szikley
+	June-26-2014
+*/
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -22,7 +29,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class GUIImageViewer {
+public class GUIImageViewer 
+{
     static Box myBox = Box.createVerticalBox();
     static Box imageBox = Box.createVerticalBox();
     static BufferedImage currentImage = new BufferedImage(400,400,BufferedImage.TYPE_INT_RGB);
@@ -69,7 +77,9 @@ public class GUIImageViewer {
         sshow.addSlide(new SlideImage());
         slides = sshow.toArray(); 
     }
-    public static void main(String[] args) {
+	
+    public static void main(String[] args) 
+	{
         menuBar.add(fileMenu);
         fileMenu.add(newMenu);
         fileMenu.add(saveMenu);
@@ -120,8 +130,11 @@ public class GUIImageViewer {
         captionArea.setMaximumSize(captionSize);
         captionArea.setMaximumSize(captionSize);
     }
-    public static class GUIListener implements ActionListener{
-        public void actionPerformed(ActionEvent event){
+	
+    public static class GUIListener implements ActionListener
+	{
+        public void actionPerformed(ActionEvent event)
+		{
             if (event.getSource() == browseButton)
                 Browse(true,picfilter);
             if (event.getSource() == saveButton){
@@ -142,14 +155,14 @@ public class GUIImageViewer {
     }
     
     public static class JListListener implements ListSelectionListener
-        {
-            @Override
-            public void valueChanged(ListSelectionEvent e)
-            {
-                
-                captionArea.setText(""+ slideList.getSelectedValue());
-            }
-        }
+    {
+		@Override
+		public void valueChanged(ListSelectionEvent e)
+		{
+
+			captionArea.setText(""+ slideList.getSelectedValue());
+		}
+	}
     
     public static void createNewSlideShow()
     {
@@ -232,4 +245,4 @@ public class GUIImageViewer {
         }
         return null;
     }
-    }
+}

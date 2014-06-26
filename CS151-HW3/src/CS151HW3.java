@@ -1,3 +1,4 @@
+
 /*
 	CS151HW3.java
 
@@ -6,11 +7,48 @@
 	June-21-2014
 */
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+
 public class CS151HW3
 {
 	// @param args the command line arguments
 	public static void main(String[] args)
 	{
-		// TODO code application logic here
+		serializerTest();
+	}
+	
+	static void serializerTest()
+	{
+		SlideShow sShow = new SlideShow();
+		
+		SlideImage slide = new SlideImage();
+		
+		slide.setCaption("Caption");
+		
+		try
+		{
+			BufferedImage image = ImageIO.read(new File("/Users/Luca/Desktop/image.png"));
+			
+			slide.setImage(image);
+		}
+		catch(IOException ex)
+		{
+			System.out.println(ex);
+		}
+		
+		sShow.addSlide(slide);
+		
+		try
+		{
+			int result = Serializer.saveSlideToFile(sShow, "/Users/Luca/Desktop/slide_show.xml");
+			System.out.println("Result: " + result);
+		}
+		catch(Exception ex)
+		{
+			System.out.println(ex);
+		}
 	}
 }
