@@ -149,6 +149,6 @@ public class SlideShow
 	@Override
 	public String toString()
 	{
-		return "SlideShow " + name + " : " + getImages().size() + "slide(s)";
+		return "SlideShow " + name + " : " + getImages().size() + " slide(s)";
 	}
 }
