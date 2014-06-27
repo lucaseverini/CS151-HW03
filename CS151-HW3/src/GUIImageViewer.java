@@ -1,4 +1,10 @@
+/*
+	GUIImageViewer.java
 
+    Assignment #3 - CS151 - SJSU
+	By Luca Severini, Omari Straker, Syed Sarmad, Matt Szikley
+	June-26-2014
+*/
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
