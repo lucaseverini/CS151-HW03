@@ -1,10 +1,3 @@
-/*
-	GUIImageViewer.java
-
-    Assignment #3 - CS151 - SJSU
-	By Luca Severini, Omari Straker, Syed Sarmad, Matt Szikley
-	June-26-2014
-*/
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -12,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -29,8 +23,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class GUIImageViewer 
-{
+public class GUIImageViewer {
     static Box myBox = Box.createVerticalBox();
     static Box imageBox = Box.createVerticalBox();
     static BufferedImage currentImage = new BufferedImage(400,400,BufferedImage.TYPE_INT_RGB);
@@ -74,12 +67,10 @@ public class GUIImageViewer
         sshow.addSlide(new SlideImage());
         sshow.addSlide(new SlideImage());
         sshow.addSlide(new SlideImage());
-        sshow.addSlide(new SlideImage());
+        sshow.addSlide(new SlideImage("oko","C:/hubba hubba",null));
         slides = sshow.toArray(); 
     }
-	
-    public static void main(String[] args) 
-	{
+    public static void main(String[] args) {
         menuBar.add(fileMenu);
         fileMenu.add(newMenu);
         fileMenu.add(saveMenu);
@@ -110,7 +101,7 @@ public class GUIImageViewer
         myBox.add(saveButton);
         myBox.add(Box.createRigidArea(new Dimension(0,10)));
         Dimension listSize = new Dimension(180,200);
-        TestCode();
+        TestCode();  //TODO: Remove call
         slideList = new JList(slides);
         slideList.setMaximumSize(listSize);
         slideList.setMinimumSize(listSize);
@@ -130,13 +121,11 @@ public class GUIImageViewer
         captionArea.setMaximumSize(captionSize);
         captionArea.setMaximumSize(captionSize);
     }
-	
-    public static class GUIListener implements ActionListener
-	{
-        public void actionPerformed(ActionEvent event)
-		{
-            if (event.getSource() == browseButton)
-                Browse(true,picfilter);
+    public static class GUIListener implements ActionListener{
+        public void actionPerformed(ActionEvent event){
+            if (event.getSource() == browseButton) {
+                 browseForImage();
+            }
             if (event.getSource() == saveButton){
                 returnval = chooser.showOpenDialog(null);
             }
@@ -155,14 +144,13 @@ public class GUIImageViewer
     }
     
     public static class JListListener implements ListSelectionListener
-    {
-		@Override
-		public void valueChanged(ListSelectionEvent e)
-		{
-
-			captionArea.setText(""+ slideList.getSelectedValue());
-		}
-	}
+        {
+            @Override
+            public void valueChanged(ListSelectionEvent e)
+            {
+                refreshSlide();
+            }
+        }
     
     public static void createNewSlideShow()
     {
@@ -187,6 +175,7 @@ public class GUIImageViewer
     public static void openSlideShow()
     {
         File currFile = Browse(true, txtfilter);
+        //TODO: 
     }
     
     public static void addNewSlide()
@@ -206,7 +195,10 @@ public class GUIImageViewer
     
     public static void refreshSlide()
     {
-        
+        captionArea.setText(""+ slideList.getSelectedValue());
+        currentCaption.setText("" + slideList.getSelectedValue());
+        //TODO: Redraw image        
+       
     }
     
     public static void replaceSlide()
@@ -245,4 +237,32 @@ public class GUIImageViewer
         }
         return null;
     }
-}
+    
+    public static void refreshJLIst()
+    {   //Update Object Array and reconstruct JList with new array
+        slides = sshow.toArray(); 
+        slideList = new JList(slides);
+    }
+    
+    public static void browseForImage()
+    { //call browse to get the file, if a file is found and the row is highlighted,
+      //assign that image to Slide Image instance  
+      File currFile =  Browse(true,picfilter);  
+      try {
+        if (currFile != null)
+        {
+            if (slideList.getSelectedIndex() != -1)
+            {
+                slideList.getSelectedValue().setImage(ImageIO.read(currFile));
+            }
+        }
+      }
+      catch (Exception e)
+      {
+          System.out.println("Image file could not be added: " + e.getMessage());
+          //TODO: use messagen box
+      }
+              
+      
+    }
+    }
