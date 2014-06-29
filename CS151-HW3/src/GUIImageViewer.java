@@ -30,6 +30,9 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class GUIImageViewer {
+ 
+    private static SlideShow slideShow;
+    
     static Box myBox = Box.createVerticalBox();
     static Box imageBox = Box.createVerticalBox();
     static BufferedImage currentImage = new BufferedImage(400,400,BufferedImage.TYPE_INT_RGB);
@@ -160,7 +163,8 @@ public class GUIImageViewer {
     
     public static void createNewSlideShow()
     {
-        
+        slideShow = new SlideShow();
+        addNewSlide();
     }
     
     public static void saveSlideShow()
@@ -186,7 +190,7 @@ public class GUIImageViewer {
     
     public static void addNewSlide()
     {
-        
+        slideShow.addSlide(new SlideImage());
     }
     
     public static void saveSlide()
