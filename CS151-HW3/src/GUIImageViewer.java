@@ -216,6 +216,7 @@ public class GUIImageViewer {
     public static void addNewSlide()
     {
         sshow.addSlide(new SlideImage());
+        refreshSlide();
     }
     
     public static void saveSlide() //???
