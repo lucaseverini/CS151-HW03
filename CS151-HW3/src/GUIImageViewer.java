@@ -152,7 +152,7 @@ public class GUIImageViewer {
                 returnval = chooser.showOpenDialog(null);
             }
             if (event.getSource() == addButton){
-                
+                addNewSlide();
             }
             if (event.getSource() == removeButton){
                 removeSlide();
