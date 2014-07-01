@@ -1,13 +1,17 @@
 /*
- * Copyright (C) 2014 Sarmad Syed. All Rights reserved.
- */
+	Serializer.java
+
+    Assignment #3 - CS151 - SJSU
+	By Luca Severini, Omari Straker, Syed Sarmad, Matt Szikley
+	June-24-2014
+*/
 
 import java.awt.image.BufferedImage;
-
-/**
- *
- * @author Sarmad Syed, Omari Straker, Matt Sziklay, Luca Severini
- */
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import javax.imageio.ImageIO;
 
 /*
  * The purpose of this class is to represent a Slide in a slide show.
@@ -15,10 +19,12 @@ import java.awt.image.BufferedImage;
  * @param caption, the caption to the image.
  * @param filePath, the path to the image. 
  */
-public class SlideImage 
+public class SlideImage implements Serializable
 {
-    private BufferedImage image;
-    private String caption, filePath;
+	private static final long serialVersionUID = 1L;
+    private transient BufferedImage image;
+    private String caption; 
+	private String filePath;
     
    /* 
     * Default Constructor That creates 
@@ -112,15 +118,40 @@ public class SlideImage
             
     }
     
+    /*
+     * Returns the a which describes the object instance
+     * @param none
+     */
+	@Override
     public String toString()
     {
-        if ((caption == null)|(caption.equals("")))
-        {
+        if ((caption == null) || (caption.equals("")))
+        { 
             return "Untitled";
         }
         else
         {
-            return caption;
+            return caption + " : " + filePath;
         }
     }
+	
+    /*
+     * Reads the data from the input stream and converts it back into the object properties
+     * @param inputStream, the input stream from which the data is read
+     */
+	private void readObject(ObjectInputStream inputStream) throws ClassNotFoundException, IOException 
+	{
+		inputStream.defaultReadObject();
+		image = ImageIO.read(inputStream);
+	}
+	
+    /*
+     * Converts and writes the object properties into output stream
+     * @param outputStream, the output stream in which the data is written
+     */
+   private void writeObject(ObjectOutputStream outputStream) throws IOException 
+	{
+        outputStream.defaultWriteObject();
+		ImageIO.write(image, "png", outputStream);
+	}
 }

@@ -6,6 +6,7 @@
 	June-26-2014
 */
 
+import java.io.Serializable;
 import java.util.*;
 
 /*
@@ -16,9 +17,9 @@ import java.util.*;
  * @param images, the ArrayList of Images
  * @param filePathSlideShow, the path to the SlideShow.
  */
-public class SlideShow 
+public class SlideShow implements Serializable
 {
-	private ArrayList<SlideImage> images;
+	private final ArrayList<SlideImage> images;
 	private String name;
 	private String filePathSlideShow;
 
