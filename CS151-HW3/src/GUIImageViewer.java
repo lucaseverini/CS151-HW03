@@ -1,20 +1,20 @@
-/*
-	GUIImageViewer.java
 
-    Assignment #3 - CS151 - SJSU
-	By Luca Severini, Omari Straker, Syed Sarmad, Matt Szikley
-	June-26-2014
-*/
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.Box;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,9 +30,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class GUIImageViewer {
- 
-    private static SlideShow slideShow;
-    
     static Box myBox = Box.createVerticalBox();
     static Box imageBox = Box.createVerticalBox();
     static BufferedImage currentImage = new BufferedImage(400,400,BufferedImage.TYPE_INT_RGB);
@@ -45,6 +42,7 @@ public class GUIImageViewer {
     static JButton browseButton = new JButton("Browse");
     static JButton saveButton = new JButton("Save");
     static JButton addButton = new JButton("Add New");
+    static JButton removeButton = new JButton("Remove Slide");
     static JTextArea searchField = new JTextArea(1,20);
     static JLabel searchLabel = new JLabel("Search: ");
     static JFrame myFrame = new JFrame("Image Viewer");
@@ -57,9 +55,9 @@ public class GUIImageViewer {
     static JMenuItem saveMenu = new JMenuItem("Save");
     static JMenuItem openMenu = new JMenuItem("Open");
     static JMenuItem exitMenu = new JMenuItem("Exit");
-    static String[] captionSamples = {"one", "two", "three", "four"};
     static Object[] slides;
-    static JList<SlideImage> slideList; 
+    static JList<SlideImage> slideList;
+    static DefaultListModel model;
     static JFileChooser chooser = new JFileChooser();
     static FileNameExtensionFilter picfilter = new FileNameExtensionFilter(
             "JPG, PNG, or BMP", "jpg","png","bmp");
@@ -68,15 +66,19 @@ public class GUIImageViewer {
     static int returnval;
     static SlideShow sshow = new SlideShow();
     static BorderLayout myLayout = new BorderLayout();
-    
-    public static void TestCode()
+    static ImageViewer myViewer = new ImageViewer();
+    static SlideImage cat,dog,chicken;
+    //Part of test method. To be deleted later.
+    public static void TestCode() throws IOException
     {   //Test method to be used for easily creating test data in one place for quick removal  
         //TODO: Remove method
-        
+        cat = new SlideImage("cat","cat.jpg", ImageIO.read(new File("cat.jpg")));
+        dog = new SlideImage("dog","dog.jpg", ImageIO.read(new File("dog.jpg")));
+        chicken = new SlideImage("chicken","chicken.jpg", ImageIO.read(new File("chicken.jpg")));
+        sshow.addSlide(cat);
+        sshow.addSlide(dog);
+        sshow.addSlide(chicken);
         sshow.addSlide(new SlideImage());
-        sshow.addSlide(new SlideImage());
-        sshow.addSlide(new SlideImage());
-        sshow.addSlide(new SlideImage("oko","C:/hubba hubba",null));
         slides = sshow.toArray(); 
     }
     public static void main(String[] args) {
@@ -91,7 +93,6 @@ public class GUIImageViewer {
         exitMenu.addActionListener(new GUIListener());
         myFrame.setLayout(myLayout);
         myFrame.setMinimumSize(new Dimension(900,600));
-        myFrame.setVisible(true);
         myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         myFrame.setJMenuBar(menuBar);
         Box browseBox = Box.createHorizontalBox();
@@ -99,6 +100,8 @@ public class GUIImageViewer {
         browseBox.add(fileArea);
         browseButton.addActionListener(new GUIListener());
         saveButton.addActionListener(new GUIListener());
+        addButton.addActionListener(new GUIListener());
+        removeButton.addActionListener(new GUIListener());
         browseBox.add(browseButton);
         myBox.add(browseBox);
         myBox.add(Box.createRigidArea(new Dimension(0,10)));
@@ -110,7 +113,12 @@ public class GUIImageViewer {
         myBox.add(saveButton);
         myBox.add(Box.createRigidArea(new Dimension(0,10)));
         Dimension listSize = new Dimension(180,200);
-        TestCode();  //TODO: Remove call
+        try {
+            TestCode();
+        } catch (IOException ex) {
+            Logger.getLogger(GUIImageViewer.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Test file not found.");
+        }
         slideList = new JList(slides);
         slideList.setMaximumSize(listSize);
         slideList.setMinimumSize(listSize);
@@ -118,9 +126,13 @@ public class GUIImageViewer {
         myBox.add(slideList);
         myBox.add(Box.createRigidArea(new Dimension(0,10)));
         myBox.add(addButton);
+        myBox.add(Box.createRigidArea(new Dimension(0,10)));
+        myBox.add(removeButton);
         myFrame.getContentPane().add(myBox,myLayout.WEST);
         //Above code returns an error. Couldn't quite get
         //The image area squared off right
+        imageBox.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        imageBox.add(myViewer);
         imageBox.add(currentCaption);
         myFrame.getContentPane().add(imageBox,myLayout.CENTER);
         Dimension browseSize = new Dimension(80,20);
@@ -129,20 +141,27 @@ public class GUIImageViewer {
         Dimension captionSize = new Dimension(150,20);
         captionArea.setMaximumSize(captionSize);
         captionArea.setMaximumSize(captionSize);
+        myFrame.setVisible(true);
+        
     }
     public static class GUIListener implements ActionListener{
         public void actionPerformed(ActionEvent event){
-            if (event.getSource() == browseButton) {
-                 browseForImage();
-            }
+            if (event.getSource() == browseButton)
+                Browse(true,picfilter);
             if (event.getSource() == saveButton){
                 returnval = chooser.showOpenDialog(null);
             }
+            if (event.getSource() == addButton){
+                
+            }
+            if (event.getSource() == removeButton){
+                removeSlide();
+            }
             if (event.getSource() == newMenu)
                 //Clear the JList, clear the current slideshow
+                createNewSlideShow();
             if (event.getSource() == saveMenu){
                 saveSlideShow();
-                //May need a new different file chooser for Slideshows.
             } 
             if (event.getSource() == openMenu){
                 openSlideShow();
@@ -157,14 +176,18 @@ public class GUIImageViewer {
             @Override
             public void valueChanged(ListSelectionEvent e)
             {
-                refreshSlide();
+                
+                captionArea.setText(""+ slideList.getSelectedValue());
+                currentCaption.setText(""+ slideList.getSelectedValue());
+                myViewer.setCurrentImage(slideList.getSelectedValue().getImage());
+                myViewer.repaint();
+               
             }
         }
     
     public static void createNewSlideShow()
     {
-        slideShow = new SlideShow();
-        addNewSlide();
+
     }
     
     public static void saveSlideShow()
@@ -180,40 +203,40 @@ public class GUIImageViewer {
             currFile = new File(currPath);
         }
         //TODO: add try/catch block inside else statement, and actually save file info
+        //Luca
     }
     
     public static void openSlideShow()
     {
         File currFile = Browse(true, txtfilter);
-        //TODO: 
+        //Luca
     }
     
     public static void addNewSlide()
     {
-        slideShow.addSlide(new SlideImage());
+        //Sarmad
     }
     
-    public static void saveSlide()
+    public static void saveSlide() //???
     {
         slideList.getSelectedValue().setCaption((captionArea.getText()));
     }
     
     public static void removeSlide()
     {
+        sshow.removeSlides(slideList.getSelectedIndex());
+        //Sarmad
         
     }
     
     public static void refreshSlide()
     {
-        captionArea.setText(""+ slideList.getSelectedValue());
-        currentCaption.setText("" + slideList.getSelectedValue());
-        //TODO: Redraw image        
-       
+     //Omari   
     }
     
     public static void replaceSlide()
     {
-        
+        //Possibly axed?
     }
     
     public static void OnExit()
@@ -222,7 +245,7 @@ public class GUIImageViewer {
     }
     
     public static File Browse(boolean opentruesavefalse, FileNameExtensionFilter filter)
-    {
+    { //Omari
         int result;
         chooser.resetChoosableFileFilters();
         chooser.addChoosableFileFilter(filter);
@@ -246,33 +269,5 @@ public class GUIImageViewer {
            //TODO: Error message
         }
         return null;
-    }
-    
-    public static void refreshJLIst()
-    {   //Update Object Array and reconstruct JList with new array
-        slides = sshow.toArray(); 
-        slideList = new JList(slides);
-    }
-    
-    public static void browseForImage()
-    { //call browse to get the file, if a file is found and the row is highlighted,
-      //assign that image to Slide Image instance  
-      File currFile =  Browse(true,picfilter);  
-      try {
-        if (currFile != null)
-        {
-            if (slideList.getSelectedIndex() != -1)
-            {
-                slideList.getSelectedValue().setImage(ImageIO.read(currFile));
-            }
-        }
-      }
-      catch (Exception e)
-      {
-          System.out.println("Image file could not be added: " + e.getMessage());
-          //TODO: use messagen box
-      }
-              
-      
     }
     }
