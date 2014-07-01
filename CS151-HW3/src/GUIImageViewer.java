@@ -186,8 +186,9 @@ public class GUIImageViewer {
         }
     
     public static void createNewSlideShow()
-    {
-
+    { 
+          sshow = new SlideShow();
+          addNewSlide();
     }
     
     public static void saveSlideShow()
@@ -214,7 +215,7 @@ public class GUIImageViewer {
     
     public static void addNewSlide()
     {
-        //Sarmad
+        sshow.addSlide(new SlideImage());
     }
     
     public static void saveSlide() //???
