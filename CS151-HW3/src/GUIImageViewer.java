@@ -249,9 +249,7 @@ public class GUIImageViewer {
         //Omari   
     }
 
-    public static void replaceSlide() {
-        //Possibly axed?
-    }
+   
 
     public static void OnExit() {
 
