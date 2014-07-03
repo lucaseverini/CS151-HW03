@@ -11,12 +11,18 @@ package SlideShow;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import javax.swing.Box;
 import javax.swing.JComponent;
 
 public class ImageViewer extends JComponent
 {
 	private static final long serialVersionUID = 1L;
     Image currentImage;
+    Box myBox;
+    
+    ImageViewer(Box b){
+        myBox = b;
+    }
 	
     Image getCurrentImage()
 	{
@@ -32,7 +38,8 @@ public class ImageViewer extends JComponent
 	public void paintComponent(Graphics g)
 	{
         Graphics2D g2 = (Graphics2D) g;
-        g2.drawImage(getCurrentImage(), 0,0, this);
-        //Coordinates will need to be worked out.
+        if(currentImage!=null)
+        g2.drawImage(currentImage, (((int)myBox.getWidth())-currentImage.getWidth(this))/2,
+                (((int)myBox.getHeight())-currentImage.getHeight(this))/2,this); 
     }
 }
