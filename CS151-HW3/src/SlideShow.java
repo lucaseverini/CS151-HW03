@@ -157,4 +157,9 @@ public class SlideShow implements Serializable
 	{
 		return "SlideShow " + name + " : " + getImages().size() + " slide(s)";
 	}
+        
+        public int getSize()
+        {
+            return images.size();
+        }
 }
