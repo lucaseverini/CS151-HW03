@@ -36,6 +36,7 @@ import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.util.Arrays;
 
 public class GUIImageViewer 
 {
@@ -156,58 +157,74 @@ public class GUIImageViewer
         myFrame.setVisible(true);
         
     }
-	
-    public static class GUIListener implements ActionListener
+
+    public static class GUIListener implements ActionListener 
 	{
-        public void actionPerformed(ActionEvent event)
+        public void actionPerformed(ActionEvent event) 
 		{
-            if (event.getSource() == browseButton)
-                Browse(true,picfilter);
-            if (event.getSource() == saveButton){
-                returnval = chooser.showOpenDialog(null);
+            if (event.getSource() == browseButton) 
+			{
+                browseForImage();
             }
-            if (event.getSource() == addButton){
-                
+			
+            if (event.getSource() == saveButton) 
+			{
+                saveSlide();
             }
-            if (event.getSource() == removeButton){
+			
+            if (event.getSource() == addButton) 
+			{
+                addNewSlide();
+            }
+			
+            if (event.getSource() == removeButton)
+			{
                 removeSlide();
             }
+			
             if (event.getSource() == newMenu)
-                //Clear the JList, clear the current slideshow
+			{
+                // Clear the JList, clear the current slideshow
                 createNewSlideShow();
-            if (event.getSource() == saveMenu){
+			}
+			
+            if (event.getSource() == saveMenu)
+			{
                 saveSlideShow();
             } 
-            if (event.getSource() == openMenu){
+			
+            if (event.getSource() == openMenu)
+			{
                 openSlideShow();
             }
+			
             if (event.getSource() == exitMenu)
+			{
                 myFrame.dispose();
+			}
         }
     }
-    
-    public static class JListListener implements ListSelectionListener
-    {
-		@Override
-		public void valueChanged(ListSelectionEvent e)
-		{
-			captionArea.setText(""+ slideList.getSelectedValue());
-			currentCaption.setText(""+ slideList.getSelectedValue());
-			myViewer.setCurrentImage(slideList.getSelectedValue().getImage());
-			myViewer.repaint();
-		}
+
+    public static class JListListener implements ListSelectionListener {
+
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            refreshSlide();
+        }
     }
-    
-    public static void createNewSlideShow()
-    {
+
+    public static void createNewSlideShow() {
+        sshow = new SlideShow();
+        addNewSlide();
+        
     }
     
     public static void saveSlideShow()
     {
         File currFile;
         String currPath = sshow.getFilePath();
-        if ((currPath.equals(""))|(currPath == null))
-        {
+        if ((currPath == null) | (currPath.equals("")))
+		{
             currFile = Browse(false, txtfilter);
         }
         else
@@ -223,43 +240,67 @@ public class GUIImageViewer
         File currFile = Browse(true, txtfilter);
         //Luca
     }
-    
-    public static void addNewSlide()
-    {
-        //Sarmad
+
+    public static void addNewSlide() 
+	{
+        sshow.addSlide(new SlideImage());
+        slideList.setSelectedIndex(sshow.getSize() - 1);
+        refreshJLIst();
+        refreshSlide();
     }
     
     public static void saveSlide() //???
     {
         slideList.getSelectedValue().setCaption((captionArea.getText()));
     }
-    
-    public static void removeSlide()
-    {
-        sshow.removeSlides(slideList.getSelectedIndex());
-        //Sarmad 
+
+    public static void removeSlide() 
+	{
+        //only try to remove if a row is selected to prevent exception//
+        if (slideList.getSelectedIndex() != -1) {
+            sshow.removeSlides(slideList.getSelectedIndex());
+            if (sshow.getSize() == 0) 
+			{
+                addNewSlide();
+            } 
+			else 
+			{
+                slideList.setSelectedIndex(sshow.getSize() - 1);
+            }
+        }
+		
+        refreshJLIst();
+        refreshSlide();
+        //Sarmad
     }
-    
+
     public static void refreshSlide()
-    {
-     //Omari   
+	{
+        //in case no row is actually selected, don't want to cause a runtime error. 
+        //Just auto select the first row on the jList because list will never be empty
+        if (slideList.getSelectedIndex() == -1) 
+		{
+            slideList.setSelectedIndex(0);
+        }
+        captionArea.setText("" + slideList.getSelectedValue());
+        currentCaption.setText("" + slideList.getSelectedValue());
+        myViewer.setCurrentImage(slideList.getSelectedValue().getImage());
+        myViewer.repaint();
+        //Omari   
     }
-    
-    public static void replaceSlide()
-    {
-        //Possibly axed?
-    }
-    
+
     public static void OnExit()
-    {        
+	{
     }
     
     public static File Browse(boolean opentruesavefalse, FileNameExtensionFilter filter)
     { //Omari
         int result;
+		
         chooser.resetChoosableFileFilters();
         chooser.addChoosableFileFilter(filter);
         chooser.setAcceptAllFileFilterUsed(false);
+		
         if (opentruesavefalse)
         {
             result = chooser.showOpenDialog(null);
@@ -268,16 +309,50 @@ public class GUIImageViewer
         {
             result = chooser.showSaveDialog(null);
         }
+		
         if (result == JFileChooser.APPROVE_OPTION)
         {
             File currFile = chooser.getSelectedFile();
             chooser.setSelectedFile(null);
             return currFile;
         }
+		
         if (result == JFileChooser.ERROR_OPTION)
         {
            //TODO: Error message
         }
+		
         return null;
+    }
+
+	// Update Object Array and reconstruct JList with new array
+	public static void refreshJLIst()  
+	{
+        slides = sshow.toArray();
+        //slideList = new JList(slides);
+        //SlideImage[] yaya = (SlideImage[])slides;
+        SlideImage[] slImageArray = Arrays.copyOf(slides, slides.length, SlideImage[].class);
+        slideList.setListData(slImageArray);
+    }
+
+	// call browse to get the file, if a file is found and the row is highlighted,
+    public static void browseForImage() 
+	{ 
+        //assign that image to Slide Image instance  
+        File currFile = Browse(true, picfilter);
+        try 
+		{
+            if (currFile != null) 
+			{
+                if (slideList.getSelectedIndex() != -1) 
+				{
+                    slideList.getSelectedValue().setImage(ImageIO.read(currFile));
+                }
+            }
+        } catch (Exception e)
+		{
+            System.out.println("Image file could not be added: " + e.getMessage());
+            // TODO: use messagen box
+        }
     }
 }

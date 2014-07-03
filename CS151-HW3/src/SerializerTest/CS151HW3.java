@@ -1,4 +1,4 @@
-package SlideShow;
+package SerializerTest;
 
 
 /*
@@ -9,6 +9,9 @@ package SlideShow;
 	June-21-2014
 */
 
+import SlideShow.Serializer;
+import SlideShow.SlideImage;
+import SlideShow.SlideShow;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
