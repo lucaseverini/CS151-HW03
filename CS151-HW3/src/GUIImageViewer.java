@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -70,7 +71,6 @@ public class GUIImageViewer {
     static SlideImage cat, dog, chicken;
 
     //Part of test method. To be deleted later.
-
     public static void TestCode() throws IOException {   //Test method to be used for easily creating test data in one place for quick removal  
         //TODO: Remove method
         cat = new SlideImage("cat", "cat.jpg", ImageIO.read(new File("cat.jpg")));
@@ -182,7 +182,7 @@ public class GUIImageViewer {
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-           refreshSlide();
+            refreshSlide();
         }
     }
 
@@ -212,6 +212,7 @@ public class GUIImageViewer {
 
     public static void addNewSlide() {
         sshow.addSlide(new SlideImage());
+        slideList.setSelectedIndex(sshow.getSize() - 1);
         refreshJLIst();
         refreshSlide();
     }
@@ -223,28 +224,29 @@ public class GUIImageViewer {
 
     public static void removeSlide() {
         //only try to remove if a row is selected to prevent exception//
-        if (slideList.getSelectedIndex() != -1)
-        {
-        sshow.removeSlides(slideList.getSelectedIndex());
-        slideList.setSelectedIndex(sshow.getImages().size()-1);
+        if (slideList.getSelectedIndex() != -1) {
+            sshow.removeSlides(slideList.getSelectedIndex());
+            if (sshow.getSize() == 0) {
+                addNewSlide();
+            } else {
+                slideList.setSelectedIndex(sshow.getSize() - 1);
+            }
         }
         refreshJLIst();
         refreshSlide();
         //Sarmad
-
     }
 
     public static void refreshSlide() {
             //in case no row is actually selected, don't want to cause a runtime error. 
-            //Just auto select the first row on the jList because list will never be empty
-            if (slideList.getSelectedIndex() == -1)
-            {
-                slideList.setSelectedIndex(0);
-            } 
-            captionArea.setText("" + slideList.getSelectedValue());
-            currentCaption.setText("" + slideList.getSelectedValue());
-            myViewer.setCurrentImage(slideList.getSelectedValue().getImage());
-            myViewer.repaint();
+        //Just auto select the first row on the jList because list will never be empty
+        if (slideList.getSelectedIndex() == -1) {
+            slideList.setSelectedIndex(0);
+        }
+        captionArea.setText("" + slideList.getSelectedValue());
+        currentCaption.setText("" + slideList.getSelectedValue());
+        myViewer.setCurrentImage(slideList.getSelectedValue().getImage());
+        myViewer.repaint();
         //Omari   
     }
 
@@ -279,8 +281,10 @@ public class GUIImageViewer {
 
     public static void refreshJLIst() {   //Update Object Array and reconstruct JList with new array
         slides = sshow.toArray();
-        slideList = new JList(slides);
-        
+        //slideList = new JList(slides);
+        //SlideImage[] yaya = (SlideImage[])slides;
+        SlideImage[] slImageArray = Arrays.copyOf(slides, slides.length, SlideImage[].class);
+        slideList.setListData(slImageArray);
     }
 
     public static void browseForImage() { //call browse to get the file, if a file is found and the row is highlighted,
