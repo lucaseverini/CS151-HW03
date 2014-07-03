@@ -154,7 +154,7 @@ public class GUIImageViewer {
                 browseForImage();
             }
             if (event.getSource() == saveButton) {
-                returnval = chooser.showOpenDialog(null);
+                saveSlide();
             }
             if (event.getSource() == addButton) {
                 addNewSlide();
