@@ -349,7 +349,7 @@ public class GUIImageViewer
                     slideList.getSelectedValue().setImage(ImageIO.read(currFile));
                 }
             }
-        } catch (Exception e)
+                } catch (Exception e)
 		{
             System.out.println("Image file could not be added: " + e.getMessage());
             // TODO: use messagen box

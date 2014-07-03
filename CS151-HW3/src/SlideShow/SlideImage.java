@@ -133,7 +133,7 @@ public class SlideImage implements Serializable
         }
         else
         {
-            return caption + " : " + filePath;
+            return "Image: " + caption;
         }
     }
 	
