@@ -1,3 +1,5 @@
+package SlideShow;
+
 
 /*
 	CS151HW3.java

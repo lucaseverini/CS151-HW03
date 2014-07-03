@@ -6,6 +6,8 @@
 	June-24-2014
 */
 
+package SlideShow;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.ObjectInputStream;

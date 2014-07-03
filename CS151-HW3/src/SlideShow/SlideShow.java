@@ -6,6 +6,8 @@
 	June-26-2014
 */
 
+package SlideShow;
+
 import java.io.Serializable;
 import java.util.*;
 
