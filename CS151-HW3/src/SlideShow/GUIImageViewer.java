@@ -9,6 +9,7 @@
 package SlideShow;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,8 +43,6 @@ public class GUIImageViewer
 {
     static Box myBox = Box.createVerticalBox();
     static Box imageBox = Box.createVerticalBox();
-    static BufferedImage currentImage = new BufferedImage(400,400,BufferedImage.TYPE_INT_RGB);
-    static ImageIcon currentImageIcon = new ImageIcon(currentImage);
     static JLabel currentCaption = new JLabel("sample caption");
     static JMenuBar menuBar = new JMenuBar();
     static JMenu fileMenu = new JMenu("File");
@@ -57,8 +56,6 @@ public class GUIImageViewer
     static JLabel searchLabel = new JLabel("Search: ");
     static JFrame myFrame = new JFrame("Image Viewer");
     static JPanel pnlRight = new JPanel();
-    static JTextArea text = new JTextArea("Image and caption will go here.", 5,5);
-    static JScrollPane scrollText = new JScrollPane(text);
     static JTextArea fileArea = new JTextArea(1,10);
     static JTextArea captionArea = new JTextArea(1,10);
     static JMenuItem newMenu = new JMenuItem("New");
@@ -76,10 +73,11 @@ public class GUIImageViewer
     static int returnval;
     static SlideShow sshow = new SlideShow();
     static BorderLayout myLayout = new BorderLayout();
-    static ImageViewer myViewer = new ImageViewer();
+    static ImageViewer myViewer = new ImageViewer(imageBox);
     static SlideImage cat,dog,chicken;
+    static GUIListener myListener = new GUIListener();
 	
-    //Part of test method. To be deleted later.
+    //SlideImages part of test method. To be deleted later.
     public static void TestCode() throws IOException
     {   //Test method to be used for easily creating test data in one place for quick removal  
         //TODO: Remove method
@@ -100,10 +98,10 @@ public class GUIImageViewer
         fileMenu.add(saveMenu);
         fileMenu.add(openMenu);
         fileMenu.add(exitMenu);
-        newMenu.addActionListener(new GUIListener());
-        saveMenu.addActionListener(new GUIListener());
-        openMenu.addActionListener(new GUIListener());
-        exitMenu.addActionListener(new GUIListener());
+        newMenu.addActionListener(myListener);
+        saveMenu.addActionListener(myListener);
+        openMenu.addActionListener(myListener);
+        exitMenu.addActionListener(myListener);
         myFrame.setLayout(myLayout);
         myFrame.setMinimumSize(new Dimension(900,600));
         myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -111,10 +109,10 @@ public class GUIImageViewer
         Box browseBox = Box.createHorizontalBox();
         browseBox.add(new JLabel("Image:"));
         browseBox.add(fileArea);
-        browseButton.addActionListener(new GUIListener());
-        saveButton.addActionListener(new GUIListener());
-        addButton.addActionListener(new GUIListener());
-        removeButton.addActionListener(new GUIListener());
+        browseButton.addActionListener(myListener);
+        saveButton.addActionListener(myListener);
+        addButton.addActionListener(myListener);
+        removeButton.addActionListener(myListener);
         browseBox.add(browseButton);
         myBox.add(browseBox);
         myBox.add(Box.createRigidArea(new Dimension(0,10)));
@@ -142,11 +140,12 @@ public class GUIImageViewer
         myBox.add(Box.createRigidArea(new Dimension(0,10)));
         myBox.add(removeButton);
         myFrame.getContentPane().add(myBox,myLayout.WEST);
-        //Above code returns an error. Couldn't quite get
-        //The image area squared off right
-        imageBox.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        currentCaption.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        currentCaption.setFont(currentCaption.getFont().deriveFont(20.0f));
         imageBox.add(myViewer);
         imageBox.add(currentCaption);
+        imageBox.add(Box.createRigidArea(new Dimension(0,30)));
+        myViewer.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         myFrame.getContentPane().add(imageBox,myLayout.CENTER);
         Dimension browseSize = new Dimension(80,20);
         fileArea.setMinimumSize(browseSize);
@@ -291,6 +290,7 @@ public class GUIImageViewer
 
     public static void OnExit()
 	{
+            
     }
     
     public static File Browse(boolean opentruesavefalse, FileNameExtensionFilter filter)
