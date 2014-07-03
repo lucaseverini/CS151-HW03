@@ -251,6 +251,7 @@ public class GUIImageViewer
     public static void saveSlide() //???
     {
         slideList.getSelectedValue().setCaption((captionArea.getText()));
+        refreshJLIst();
     }
 
     public static void removeSlide() 
