@@ -189,8 +189,7 @@ public class GUIImageViewer {
     public static void createNewSlideShow() {
         sshow = new SlideShow();
         addNewSlide();
-        refreshJLIst();
-        refreshSlide();
+        
     }
 
     public static void saveSlideShow() {
