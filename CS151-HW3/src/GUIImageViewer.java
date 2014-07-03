@@ -212,6 +212,7 @@ public class GUIImageViewer {
 
     public static void addNewSlide() {
         sshow.addSlide(new SlideImage());
+        refreshJLIst();
         refreshSlide();
     }
 
@@ -221,7 +222,14 @@ public class GUIImageViewer {
     }
 
     public static void removeSlide() {
+        //only try to remove if a row is selected to prevent exception//
+        if (slideList.getSelectedIndex() != -1)
+        {
         sshow.removeSlides(slideList.getSelectedIndex());
+        slideList.setSelectedIndex(sshow.getImages().size()-1);
+        }
+        refreshJLIst();
+        refreshSlide();
         //Sarmad
 
     }
@@ -272,6 +280,7 @@ public class GUIImageViewer {
     public static void refreshJLIst() {   //Update Object Array and reconstruct JList with new array
         slides = sshow.toArray();
         slideList = new JList(slides);
+        
     }
 
     public static void browseForImage() { //call browse to get the file, if a file is found and the row is highlighted,
