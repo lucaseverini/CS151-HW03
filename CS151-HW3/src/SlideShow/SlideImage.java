@@ -129,7 +129,7 @@ public class SlideImage implements Serializable
     {
         if ((caption == null) || (caption.equals("")))
         { 
-            return "Untitled";
+            return "Image: Untitled";
         }
         else
         {

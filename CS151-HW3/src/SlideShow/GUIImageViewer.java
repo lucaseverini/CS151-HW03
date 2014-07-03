@@ -243,9 +243,9 @@ public class GUIImageViewer
     public static void addNewSlide() 
 	{
         sshow.addSlide(new SlideImage());
-        slideList.setSelectedIndex(sshow.getSize() - 1);
         refreshJLIst();
         refreshSlide();
+        slideList.setSelectedIndex(sshow.getSize() - 1);
     }
     
     public static void saveSlide() //???
@@ -282,8 +282,10 @@ public class GUIImageViewer
 		{
             slideList.setSelectedIndex(0);
         }
-        captionArea.setText("" + slideList.getSelectedValue());
-        currentCaption.setText("" + slideList.getSelectedValue());
+        String display = slideList.getSelectedValue().toString();
+        display = display.replace("Image: ", "");
+        captionArea.setText("" + display);
+        currentCaption.setText("" + display);
         myViewer.setCurrentImage(slideList.getSelectedValue().getImage());
         myViewer.repaint();
         //Omari   
@@ -329,11 +331,13 @@ public class GUIImageViewer
 	// Update Object Array and reconstruct JList with new array
 	public static void refreshJLIst()  
 	{
+        int lol = slideList.getSelectedIndex();
         slides = sshow.toArray();
         //slideList = new JList(slides);
         //SlideImage[] yaya = (SlideImage[])slides;
         SlideImage[] slImageArray = Arrays.copyOf(slides, slides.length, SlideImage[].class);
         slideList.setListData(slImageArray);
+        slideList.setSelectedIndex(lol);
     }
 
 	// call browse to get the file, if a file is found and the row is highlighted,
@@ -355,5 +359,7 @@ public class GUIImageViewer
             System.out.println("Image file could not be added: " + e.getMessage());
             // TODO: use messagen box
         }
+        refreshSlide();
+        
     }
 }
