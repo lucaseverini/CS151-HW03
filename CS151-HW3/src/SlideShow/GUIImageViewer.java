@@ -72,7 +72,7 @@ public class GUIImageViewer
     static SlideShow sshow = new SlideShow();
     static BorderLayout myLayout = new BorderLayout();
     static ImageViewer myViewer = new ImageViewer(imageBox);
-    static SlideImage cat,dog,chicken;
+    
     static GUIListener myListener = new GUIListener();
 	
     public static void main(String[] args) 
