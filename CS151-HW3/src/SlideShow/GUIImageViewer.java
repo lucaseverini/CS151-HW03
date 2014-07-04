@@ -12,8 +12,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Arrays;
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -25,14 +28,12 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.util.Arrays;
-import javax.swing.JOptionPane;
-import javax.swing.BorderFactory;
 
 public class GUIImageViewer 
 {
@@ -64,12 +65,14 @@ public class GUIImageViewer
 	static FileNameExtensionFilter binFilter = new FileNameExtensionFilter("BIN", "bin");
     static SlideShow sShow = new SlideShow();
     static BorderLayout myLayout = new BorderLayout();
-    static ImageViewer myViewer = new ImageViewer(imageBox);
+    static ImageViewer myViewer;
 
     static GUIListener myListener = new GUIListener();
 
+	@SuppressWarnings("unchecked")
     public static void main(String[] args)
 	{
+		myViewer = new ImageViewer(imageBox);
         menuBar.add(fileMenu);
         fileMenu.add(newMenu);
         fileMenu.add(saveMenu);
@@ -105,13 +108,8 @@ public class GUIImageViewer
         myBox.add(captionBox);
         myBox.add(Box.createRigidArea(new Dimension(0, 10)));
         Dimension listSize = new Dimension(180, 200);
-        /*try {
-         TestCode();
-         } catch (IOException ex) {
-         Logger.getLogger(GUIImageViewer.class.getName()).log(Level.SEVERE, null, ex);
-         System.out.println("Test file not found.");
-         }*/
-        slideList = new JList(slides);
+
+		slideList = new JList(slides);
         slideList.setMaximumSize(listSize);
         slideList.setMinimumSize(listSize);
         slideList.addListSelectionListener(new JListListener());
@@ -125,7 +123,7 @@ public class GUIImageViewer
         myBox.add(addButton);
         myBox.add(Box.createRigidArea(new Dimension(0, 10)));
         myBox.add(removeButton);
-        myFrame.getContentPane().add(myBox, myLayout.WEST);
+        myFrame.getContentPane().add(myBox, BorderLayout.WEST);
         currentCaption.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         currentCaption.setFont(currentCaption.getFont().deriveFont(20.0f));
         currentCaption.setOpaque(true);
@@ -135,7 +133,7 @@ public class GUIImageViewer
         imageBox.setBorder(BorderFactory.createMatteBorder(0, 5, 0, 0, Color.gray));
         myViewer.setBorder(BorderFactory.createMatteBorder(0, 0, 5, 0, Color.gray));
         imageBox.add(Box.createRigidArea(new Dimension(0, 10)));
-        myFrame.getContentPane().add(imageBox, myLayout.CENTER);
+        myFrame.getContentPane().add(imageBox, BorderLayout.CENTER);
         Dimension browseSize = new Dimension(80, 20);
         fileArea.setMinimumSize(browseSize);
         fileArea.setMaximumSize(browseSize);
@@ -351,17 +349,32 @@ public class GUIImageViewer
 	{
         //assign that image to Slide Image instance  
         File currFile = Browse(true, picFilter);
-        try {
-            if (currFile != null) {
-                if (slideList.getSelectedIndex() != -1) {
-                    slideList.getSelectedValue().setImage(ImageIO.read(currFile));
+        try 
+		{
+            if (currFile != null) 
+			{
+                if (slideList.getSelectedIndex() != -1) 
+				{
+					BufferedImage image = ImageIO.read(currFile);
+					if(image != null)
+					{
+						slideList.getSelectedValue().setImage(image);
+						refreshSlide();
+					}
+					else
+					{
+						throw new Exception("Invalid image");
+					}
                 }
             }
-        } catch (Exception e) {
-            System.out.println("Image file could not be added: " + e.getMessage());
-            // TODO: use messagen box
+        } 
+		catch (Exception ex) 
+		{
+            // System.out.println("Image file could not be added: " + ex.getMessage());
+			
+			String message = String.format("The image %s can't be imported in the slide.", currFile.getPath());
+			JOptionPane.showMessageDialog(null, message, "Slide Wizard", JOptionPane.ERROR_MESSAGE);
         }
-        refreshSlide();
     }
 
     //SlideImages part of test method. To be deleted later.
