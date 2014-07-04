@@ -48,7 +48,7 @@ public class GUIImageViewer
     static JMenu fileMenu = new JMenu("File");
     static JButton browseButton = new JButton("Browse");
     static JButton saveButton = new JButton("Save Slide");
-    static JButton addButton = new JButton("Add New Slide");
+    static JButton addButton = new JButton("Create Slide");
     static JButton removeButton = new JButton("Remove Slide");
     static JTextArea searchField = new JTextArea(1,20);
     static JLabel searchLabel = new JLabel("Search: ");
@@ -91,7 +91,7 @@ public class GUIImageViewer
         myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         myFrame.setJMenuBar(menuBar);
         Box browseBox = Box.createHorizontalBox();
-        browseBox.add(new JLabel("Image:"));
+        browseBox.add(new JLabel("Image: "));
         browseBox.add(fileArea);
         browseButton.addActionListener(myListener);
         saveButton.addActionListener(myListener);
@@ -99,6 +99,7 @@ public class GUIImageViewer
         removeButton.addActionListener(myListener);
         addButton.setSize(new Dimension(200,50));
         browseBox.add(browseButton);
+        myBox.add(Box.createRigidArea(new Dimension(0,10)));
         myBox.add(browseBox);
         myBox.add(Box.createRigidArea(new Dimension(0,10)));
         Box captionBox = Box.createHorizontalBox();
@@ -119,6 +120,9 @@ public class GUIImageViewer
         slideList.addListSelectionListener(new JListListener());
         myBox.add(slideList);
         myBox.add(Box.createRigidArea(new Dimension(0,10)));
+        saveButton.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        addButton.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        removeButton.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         myBox.add(saveButton);
         myBox.add(Box.createRigidArea(new Dimension(0,10)));
         myBox.add(addButton);
