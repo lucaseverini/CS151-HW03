@@ -46,11 +46,9 @@ public class GUIImageViewer
     static JLabel currentCaption = new JLabel("sample caption");
     static JMenuBar menuBar = new JMenuBar();
     static JMenu fileMenu = new JMenu("File");
-    static JButton forwardButton = new JButton("Search Forward");
-    static JButton backButton = new JButton("Search Backward");
     static JButton browseButton = new JButton("Browse");
-    static JButton saveButton = new JButton("Save");
-    static JButton addButton = new JButton("Add New");
+    static JButton saveButton = new JButton("Save Slide");
+    static JButton addButton = new JButton("Add New Slide");
     static JButton removeButton = new JButton("Remove Slide");
     static JTextArea searchField = new JTextArea(1,20);
     static JLabel searchLabel = new JLabel("Search: ");
@@ -77,20 +75,6 @@ public class GUIImageViewer
     static SlideImage cat,dog,chicken;
     static GUIListener myListener = new GUIListener();
 	
-    //SlideImages part of test method. To be deleted later.
-    public static void TestCode() throws IOException
-    {   //Test method to be used for easily creating test data in one place for quick removal  
-        //TODO: Remove method
-        cat = new SlideImage("cat", "cat.jpg", ImageIO.read(new File("Test_Files/cat.jpg")));
-        dog = new SlideImage("dog", "dog.jpg", ImageIO.read(new File("Test_Files/dog.jpg")));
-        chicken = new SlideImage("chicken", "chicken.jpg", ImageIO.read(new File("Test_Files/chicken.jpg")));
-        sshow.addSlide(cat);
-        sshow.addSlide(dog);
-        sshow.addSlide(chicken);
-        sshow.addSlide(new SlideImage());
-        slides = sshow.toArray(); 
-    }
-	
     public static void main(String[] args) 
 	{
         menuBar.add(fileMenu);
@@ -113,6 +97,7 @@ public class GUIImageViewer
         saveButton.addActionListener(myListener);
         addButton.addActionListener(myListener);
         removeButton.addActionListener(myListener);
+        addButton.setSize(new Dimension(200,50));
         browseBox.add(browseButton);
         myBox.add(browseBox);
         myBox.add(Box.createRigidArea(new Dimension(0,10)));
@@ -121,20 +106,20 @@ public class GUIImageViewer
         captionBox.add(captionArea);
         myBox.add(captionBox);
         myBox.add(Box.createRigidArea(new Dimension(0,10)));
-        myBox.add(saveButton);
-        myBox.add(Box.createRigidArea(new Dimension(0,10)));
         Dimension listSize = new Dimension(180,200);
-        try {
+        /*try {
             TestCode();
         } catch (IOException ex) {
             Logger.getLogger(GUIImageViewer.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Test file not found.");
-        }
+        }*/
         slideList = new JList(slides);
         slideList.setMaximumSize(listSize);
         slideList.setMinimumSize(listSize);
         slideList.addListSelectionListener(new JListListener());
         myBox.add(slideList);
+        myBox.add(Box.createRigidArea(new Dimension(0,10)));
+        myBox.add(saveButton);
         myBox.add(Box.createRigidArea(new Dimension(0,10)));
         myBox.add(addButton);
         myBox.add(Box.createRigidArea(new Dimension(0,10)));
@@ -153,6 +138,7 @@ public class GUIImageViewer
         Dimension captionSize = new Dimension(150,20);
         captionArea.setMaximumSize(captionSize);
         captionArea.setMaximumSize(captionSize);
+        createNewSlideShow();
         myFrame.setVisible(true);
         
     }
@@ -290,11 +276,6 @@ public class GUIImageViewer
         myViewer.repaint();
         //Omari   
     }
-
-    public static void OnExit()
-	{
-            
-    }
     
     public static File Browse(boolean opentruesavefalse, FileNameExtensionFilter filter)
     { //Omari
@@ -359,7 +340,21 @@ public class GUIImageViewer
             System.out.println("Image file could not be added: " + e.getMessage());
             // TODO: use messagen box
         }
-        refreshSlide();
-        
+        refreshSlide();   
     }
+    
+    	
+    //SlideImages part of test method. To be deleted later.
+    /*public static void TestCode() throws IOException
+    {   //Test method to be used for easily creating test data in one place for quick removal  
+        //TODO: Remove method
+        cat = new SlideImage("cat", "cat.jpg", ImageIO.read(new File("Test_Files/cat.jpg")));
+        dog = new SlideImage("dog", "dog.jpg", ImageIO.read(new File("Test_Files/dog.jpg")));
+        chicken = new SlideImage("chicken", "chicken.jpg", ImageIO.read(new File("Test_Files/chicken.jpg")));
+        sshow.addSlide(cat);
+        sshow.addSlide(dog);
+        sshow.addSlide(chicken);
+        sshow.addSlide(new SlideImage());
+        slides = sshow.toArray(); 
+    }*/
 }
