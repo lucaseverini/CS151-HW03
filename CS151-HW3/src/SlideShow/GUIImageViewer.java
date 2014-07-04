@@ -37,9 +37,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.util.Arrays;
+import javax.swing.JOptionPane;
 
-public class GUIImageViewer {
-
+public class GUIImageViewer 
+{
     static Box myBox = Box.createVerticalBox();
     static Box imageBox = Box.createVerticalBox();
     static JLabel currentCaption = new JLabel("sample caption");
@@ -63,18 +64,17 @@ public class GUIImageViewer {
     static JList<SlideImage> slideList;
     static DefaultListModel model;
     static JFileChooser chooser = new JFileChooser();
-    static FileNameExtensionFilter picfilter = new FileNameExtensionFilter(
-            "JPG, PNG, or BMP", "jpg", "png", "bmp");
-    static FileNameExtensionFilter txtfilter = new FileNameExtensionFilter(
-            "TXT", "txt");
-    static int returnval;
-    static SlideShow sshow = new SlideShow();
+    static FileNameExtensionFilter picFilter = new FileNameExtensionFilter("JPG, PNG, or BMP", "jpg", "png", "bmp");
+    static FileNameExtensionFilter txtFilter = new FileNameExtensionFilter("TXT", "txt");
+	static FileNameExtensionFilter binFilter = new FileNameExtensionFilter("BIN", "bin");
+    static SlideShow sShow = new SlideShow();
     static BorderLayout myLayout = new BorderLayout();
     static ImageViewer myViewer = new ImageViewer(imageBox);
 
     static GUIListener myListener = new GUIListener();
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+	{
         menuBar.add(fileMenu);
         fileMenu.add(newMenu);
         fileMenu.add(saveMenu);
@@ -146,12 +146,13 @@ public class GUIImageViewer {
         captionArea.setMaximumSize(captionSize);
         createNewSlideShow();
         myFrame.setVisible(true);
-
     }
 
-    public static class GUIListener implements ActionListener {
-
-        public void actionPerformed(ActionEvent event) {
+    public static class GUIListener implements ActionListener 
+	{
+		@Override
+        public void actionPerformed(ActionEvent event)
+		{
             if (event.getSource() == browseButton) {
                 browseForImage();
             }
@@ -187,69 +188,96 @@ public class GUIImageViewer {
         }
     }
 
-    public static class JListListener implements ListSelectionListener {
-
+    public static class JListListener implements ListSelectionListener
+	{
         @Override
-        public void valueChanged(ListSelectionEvent e) {
+        public void valueChanged(ListSelectionEvent e)
+		{
             refreshSlide();
         }
     }
 
-    public static void createNewSlideShow() {
-        sshow = new SlideShow();
+    public static void createNewSlideShow() 
+	{
+        sShow = new SlideShow();
         addNewSlide();
-
     }
 
-    public static void saveSlideShow() {
-        File currFile;
-        String currPath = sshow.getFilePath();
-        if ((currPath == null) | (currPath.equals(""))) {
-            currFile = Browse(false, txtfilter);
+    public static void saveSlideShow() 
+	{
+        File currFile = null;
+		
+        String currPath = sShow.getFilePath();
+        if ((currPath == null) || (currPath.equals(""))) {
+            currFile = Browse(false, binFilter);
         } else {
             currFile = new File(currPath);
         }
-        //TODO: add try/catch block inside else statement, and actually save file info
-        //Luca
+        
+		if(Serializer.saveSlideToFile(sShow, currFile.getPath()) != 0)
+		{
+			String message = String.format("The file %s can't be saved.", currFile.getPath());
+			JOptionPane.showMessageDialog(null, message, "Slide Wizard", JOptionPane.ERROR_MESSAGE);
+		}
     }
 
-    public static void openSlideShow() {
-        File currFile = Browse(true, txtfilter);
-        //Luca
+    public static void openSlideShow() 
+	{
+        File currFile = Browse(true, binFilter);
+		if(currFile == null)
+		{
+			return;
+		}
+		
+		SlideShow slideShow = Serializer.openSlideFromFile(currFile.getPath());
+		if(slideShow == null)
+		{
+			String message = String.format("The file %s can't be opened.", currFile.getPath());
+			JOptionPane.showMessageDialog(null, message, "Slide Wizard", JOptionPane.ERROR_MESSAGE);
+		}
+		else
+		{
+			sShow = slideShow;
+			refreshSlidesList();
+			refreshSlide();
+		}
     }
 
-    public static void addNewSlide() {
-        sshow.addSlide(new SlideImage());
-        refreshJLIst();
+    public static void addNewSlide() 
+	{
+        sShow.addSlide(new SlideImage());
+        refreshSlidesList();
         refreshSlide();
-        slideList.setSelectedIndex(sshow.getSize() - 1);
+        slideList.setSelectedIndex(sShow.getSize() - 1);
     }
 
-    public static void saveSlide() //???
+    public static void saveSlide()
     {
         slideList.getSelectedValue().setCaption((captionArea.getText()));
-        refreshJLIst();
+        refreshSlidesList();
     }
 
-    public static void removeSlide() {
+    public static void removeSlide() 
+	{
         //only try to remove if a row is selected to prevent exception//
         if (slideList.getSelectedIndex() != -1) {
-            sshow.removeSlides(slideList.getSelectedIndex());
-            if (sshow.getSize() == 0) {
+            sShow.removeSlides(slideList.getSelectedIndex());
+            if (sShow.getSize() == 0) {
                 addNewSlide();
             } else {
-                if (slideList.getSelectedIndex() >= sshow.getSize()) {
-                    slideList.setSelectedIndex(sshow.getSize() - 1);
+                if (slideList.getSelectedIndex() >= sShow.getSize()) {
+                    slideList.setSelectedIndex(sShow.getSize() - 1);
                 }
             }
         }
 
-        refreshJLIst();
+        refreshSlidesList();
         refreshSlide();
         //Sarmad
     }
 
-    public static void refreshSlide() {
+    public static void refreshSlide() 
+	{
         //in case no row is actually selected, don't want to cause a runtime error. 
         //Just auto select the first row on the jList because list will never be empty
         if (slideList.getSelectedIndex() == -1) {
@@ -264,36 +292,55 @@ public class GUIImageViewer {
         //Omari   
     }
 
-    public static File Browse(boolean opentruesavefalse, FileNameExtensionFilter filter) { //Omari
+    public static File Browse(boolean opentruesavefalse, FileNameExtensionFilter filter)
+	{
         int result;
 
         chooser.resetChoosableFileFilters();
         chooser.addChoosableFileFilter(filter);
         chooser.setAcceptAllFileFilterUsed(false);
 
-        if (opentruesavefalse) {
+        if (opentruesavefalse) 
+		{
             result = chooser.showOpenDialog(null);
-        } else {
+ 			if (result == JFileChooser.APPROVE_OPTION)
+			{
+				File currFile = chooser.getSelectedFile();
+				return currFile;
+			}
+       } 
+		else 
+		{
             result = chooser.showSaveDialog(null);
-        }
-
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File currFile = chooser.getSelectedFile();
-            chooser.setSelectedFile(null);
-            return currFile;
-        }
-
-        if (result == JFileChooser.ERROR_OPTION) {
-            //TODO: Error message
+			if (result == JFileChooser.APPROVE_OPTION)
+			{
+				File currFile = chooser.getSelectedFile();
+				String extension = null;
+				String name = currFile.getName();
+				int idx = name.lastIndexOf('.');
+				if (idx > 0) 
+				{
+					extension = name.substring(idx + 1);
+				}
+				if(extension == null || extension.length() == 0)
+				{
+					String path = currFile.getPath();
+					path = path.concat(".bin");
+					currFile = new File(path);
+				}
+			
+				return currFile;
+			}
         }
 
         return null;
     }
 
     // Update Object Array and reconstruct JList with new array
-    public static void refreshJLIst() {
+    public static void refreshSlidesList() 
+	{
         int lol = slideList.getSelectedIndex();
-        slides = sshow.toArray();
+        slides = sShow.toArray();
         //slideList = new JList(slides);
         //SlideImage[] yaya = (SlideImage[])slides;
         SlideImage[] slImageArray = Arrays.copyOf(slides, slides.length, SlideImage[].class);
@@ -302,9 +349,10 @@ public class GUIImageViewer {
     }
 
     // call browse to get the file, if a file is found and the row is highlighted,
-    public static void browseForImage() {
+    public static void browseForImage()
+	{
         //assign that image to Slide Image instance  
-        File currFile = Browse(true, picfilter);
+        File currFile = Browse(true, picFilter);
         try {
             if (currFile != null) {
                 if (slideList.getSelectedIndex() != -1) {
@@ -325,10 +373,10 @@ public class GUIImageViewer {
      cat = new SlideImage("cat", "cat.jpg", ImageIO.read(new File("Test_Files/cat.jpg")));
      dog = new SlideImage("dog", "dog.jpg", ImageIO.read(new File("Test_Files/dog.jpg")));
      chicken = new SlideImage("chicken", "chicken.jpg", ImageIO.read(new File("Test_Files/chicken.jpg")));
-     sshow.addSlide(cat);
-     sshow.addSlide(dog);
-     sshow.addSlide(chicken);
-     sshow.addSlide(new SlideImage());
-     slides = sshow.toArray(); 
+     sShow.addSlide(cat);
+     sShow.addSlide(dog);
+     sShow.addSlide(chicken);
+     sShow.addSlide(new SlideImage());
+     slides = sShow.toArray(); 
      }*/
 }
