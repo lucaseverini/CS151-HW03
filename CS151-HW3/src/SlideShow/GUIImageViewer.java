@@ -8,19 +8,14 @@
 package SlideShow;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -31,13 +26,13 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.util.Arrays;
 import javax.swing.JOptionPane;
+import javax.swing.BorderFactory;
 
 public class GUIImageViewer 
 {
@@ -133,10 +128,13 @@ public class GUIImageViewer
         myFrame.getContentPane().add(myBox, myLayout.WEST);
         currentCaption.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         currentCaption.setFont(currentCaption.getFont().deriveFont(20.0f));
+        currentCaption.setOpaque(true);
         imageBox.add(myViewer);
+        imageBox.add(Box.createRigidArea(new Dimension(0,10)));
         imageBox.add(currentCaption);
-        imageBox.add(Box.createRigidArea(new Dimension(0, 30)));
-        myViewer.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        imageBox.setBorder(BorderFactory.createMatteBorder(0, 5, 0, 0, Color.gray));
+        myViewer.setBorder(BorderFactory.createMatteBorder(0, 0, 5, 0, Color.gray));
+        imageBox.add(Box.createRigidArea(new Dimension(0, 10)));
         myFrame.getContentPane().add(imageBox, myLayout.CENTER);
         Dimension browseSize = new Dimension(80, 20);
         fileArea.setMinimumSize(browseSize);
