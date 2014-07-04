@@ -33,7 +33,7 @@ public class SlideShow implements Serializable
 	public SlideShow() 
 	{ 
 		this.images = new ArrayList<>();
-		this.filePathSlideShow = null;
+		this.filePathSlideShow = "";
 	}
 
 	/*
